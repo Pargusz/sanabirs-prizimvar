@@ -25,17 +25,18 @@
             transform: scale(1);
             transition: transform 0.5s;
             cursor: pointer;
+            margin-top: -30px; 
         }
 
-        /* MOBİL UYUM */
         @media (max-width: 400px) {
-            .wrapper { transform: scale(0.8); }
+            .wrapper { transform: scale(0.85); margin-top: -20px; }
         }
 
+        /* ZARF GÖVDESİ */
         .envelope {
             width: 320px;
             height: 220px;
-            background-color: #d64141; /* Kırmızı */
+            background-color: #d64141;
             position: relative;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             z-index: 10;
@@ -47,7 +48,7 @@
             z-index: 1;
         }
 
-        /* HAREKETLİ KAPAK */
+        /* KAPAKLAR */
         .top-flap {
             position: absolute; top: 0; left: 0;
             width: 0; height: 0;
@@ -59,7 +60,6 @@
             z-index: 50; 
         }
 
-        /* SABİT CEPLER */
         .front-pocket {
             position: absolute; bottom: 0; left: 0;
             width: 0; height: 0;
@@ -79,41 +79,31 @@
         .left-pocket { left: 0; border-left: 160px solid #c93030; }
         .right-pocket { right: 0; border-right: 160px solid #c93030; }
 
-        /* KAĞIT AYARLARI (Sorunsuz Çıkış İçin) */
+        /* KART */
         .card {
             position: absolute;
             bottom: 0; 
             left: 50%;
             transform: translateX(-50%);
             width: 280px; 
-            height: 380px; /* Kağıt uzun */
+            height: 380px; 
             background: #fff url('https://www.transparenttextures.com/patterns/cream-paper.png');
             border-radius: 5px;
-            /* Zarfın içinde gizli kalması için başlangıçta scaleY küçültülebilir ama basit tutalım */
-            transition: bottom 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transition: bottom 1.2s cubic-bezier(0.34, 1.56, 0.64, 1); 
             z-index: 5; 
-            padding: 20px;
+            padding: 20px 15px;
             box-sizing: border-box;
             text-align: center;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Yazıları yukarıdan hizala */
+            justify-content: flex-start; 
             align-items: center;
             box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
-            opacity: 0; /* Kapalıyken görünmez olsun (taşmayı önlemek için) */
+            opacity: 0; 
         }
 
-        /* AÇILMA DURUMU */
-        .wrapper.open .top-flap {
-            transform: rotateX(180deg);
-            z-index: 2; 
-        }
-
-        .wrapper.open .card {
-            opacity: 1;
-            bottom: 100px; /* Zarfın üzerine iyice çıksın */
-            z-index: 45; /* Ceplerin önüne geç */
-        }
+        .wrapper.open .top-flap { transform: rotateX(180deg); z-index: 2; }
+        .wrapper.open .card { opacity: 1; bottom: 150px; z-index: 45; }
 
         /* YAZILAR */
         .text {
@@ -121,25 +111,72 @@
             color: #333;
             font-size: 19px;
             line-height: 1.5;
-            margin-top: 20px;
+            margin-top: 10px;
             opacity: 0;
-            transition: opacity 1s ease 0.5s;
+            transition: opacity 1s ease 0.8s;
         }
-
         .wrapper.open .text { opacity: 1; }
-
         .highlight { color: #d64141; font-weight: bold; font-size: 1.1em; }
         .funny-part { 
-            margin-top: 25px; 
-            display: block; 
-            font-weight: bold; 
-            color: #444; 
-            font-size: 1.2em;
-            padding-top: 15px;
-            border-top: 2px dashed #ddd;
+            margin-top: 20px; display: block; font-weight: bold; color: #444; font-size: 1.2em;
+            padding-top: 15px; border-top: 2px dashed #ddd;
         }
 
-        /* TIKLA YAZISI */
+        /* --- PAVYON MODU (SONSUZ LOOP) --- */
+        .pavyon-container {
+            position: absolute;
+            bottom: -45px; /* Zarfın altı */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 340px; 
+            height: 35px;
+            background-color: #000;
+            border-radius: 4px;
+            border: 2px solid #ff00de;
+            overflow: hidden; /* Dışarı taşanı gizle */
+            opacity: 0;
+            transition: opacity 0.5s ease 1s; 
+            box-shadow: 0 0 15px #ff00de;
+            z-index: 5;
+            /* Flexbox ile içeriği hizala */
+            display: flex;
+            align-items: center;
+        }
+
+        .wrapper.open .pavyon-container { opacity: 1; }
+
+        /* Kayan yazı şeridi (Track) */
+        .pavyon-track {
+            display: flex;
+            white-space: nowrap;
+            /* Sonsuz döngü için animasyon */
+            animation: kaydir 10s linear infinite;
+        }
+
+        .scrolling-item {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 16px;
+            padding-right: 50px; /* İki yazı arasındaki boşluk */
+            /* Renk animasyonu */
+            animation: renkDegistir 0.5s infinite;
+        }
+
+        /* Hile burada: Track'i sadece %50 (bir yazının boyu kadar) kaydırıp başa sarıyoruz */
+        @keyframes kaydir {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } 
+        }
+
+        @keyframes renkDegistir {
+            0%, 100% { color: #ff00de; text-shadow: 0 0 5px #ff00de; }
+            25% { color: #00ff00; text-shadow: 0 0 5px #00ff00; }
+            50% { color: #ffff00; text-shadow: 0 0 5px #ffff00; }
+            75% { color: #00ffff; text-shadow: 0 0 5px #00ffff; }
+        }
+
+
+        /* TIKLA BUTONU */
         .click-me {
             position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
             color: white; z-index: 60; font-weight: bold;
@@ -181,6 +218,17 @@
             <div class="right-pocket"></div>
             <div class="front-pocket"></div>
             <div class="click-me">Bana Tıkla ✨</div>
+            
+            <div class="pavyon-container">
+                <div class="pavyon-track">
+                    <div class="scrolling-item">
+                        ✨ SALONUMUZ KİLİMALI VE SOĞUKTUR ÇAY İKRAMIMIZDIR ✨
+                    </div>
+                    <div class="scrolling-item">
+                        ✨ SALONUMUZ KİLİMALI VE SOĞUKTUR ÇAY İKRAMIMIZDIR ✨
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -191,39 +239,21 @@
         const audio = document.getElementById('bgMusic');
         let isOpen = false;
 
-        // --- GELİŞMİŞ SES SİSTEMİ ---
-        
-        // 1. Sayfa yüklenir yüklenmez çalmayı dene (Chrome/PC için)
-        window.addEventListener('load', () => {
-            attemptPlay();
-        });
+        function attemptPlay() {
+            if (audio.duration > 0 && !audio.paused) return;
+            audio.volume = 0.6;
+            audio.play().catch(e => console.log("Bekleniyor..."));
+        }
 
-        // 2. Eğer engellenirse, Ekrana İLK dokunuşta/harekette çal (Mobil için hayalet tetikleyici)
         document.body.addEventListener('click', attemptPlay, { once: true });
         document.body.addEventListener('touchstart', attemptPlay, { once: true });
         document.body.addEventListener('scroll', attemptPlay, { once: true });
         document.body.addEventListener('mousemove', attemptPlay, { once: true });
 
-        function attemptPlay() {
-            // Zaten çalıyorsa durma
-            if (audio.duration > 0 && !audio.paused) return;
-            
-            audio.volume = 0.6;
-            audio.play().then(() => {
-                // Başarılı olduysa diğer dinleyicileri kaldır (performans için)
-                console.log("Müzik başladı.");
-            }).catch(error => {
-                console.log("Otomatik çalma tarayıcı tarafından henüz bekleniyor...");
-            });
-        }
-
-        // --- ZARF ANİMASYONU ---
         wrapper.addEventListener('click', function(e) {
-            // Müzik çalmıyorsa, zarfa tıklayınca kesin başlat
             attemptPlay();
-
             if (!isOpen) {
-                e.stopPropagation(); // Event çakışmasını önle
+                e.stopPropagation();
                 wrapper.classList.add('open');
                 isOpen = true;
                 setTimeout(createConfetti, 500);
