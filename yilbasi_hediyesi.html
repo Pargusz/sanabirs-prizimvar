@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mutlu Yıllar! 🎄</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        /* GENEL AYARLAR */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5dc; /* Bej */
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+        }
+
+        /* ZARF ALANI */
+        .wrapper {
+            position: relative;
+            transform: scale(1);
+            transition: transform 0.5s;
+            cursor: pointer;
+        }
+
+        /* MOBİL UYUM */
+        @media (max-width: 400px) {
+            .wrapper { transform: scale(0.8); }
+        }
+
+        .envelope {
+            width: 320px;
+            height: 220px;
+            background-color: #d64141; /* Kırmızı */
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        .back-wall {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #b02a2a;
+            z-index: 1;
+        }
+
+        /* HAREKETLİ KAPAK */
+        .top-flap {
+            position: absolute; top: 0; left: 0;
+            width: 0; height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 130px solid #d64141;
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out, z-index 0.2s linear 0.3s;
+            z-index: 50; 
+        }
+
+        /* SABİT CEPLER */
+        .front-pocket {
+            position: absolute; bottom: 0; left: 0;
+            width: 0; height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-bottom: 120px solid #e05252;
+            z-index: 40;
+        }
+        
+        .left-pocket, .right-pocket {
+            position: absolute; bottom: 0;
+            width: 0; height: 0;
+            border-top: 110px solid transparent;
+            border-bottom: 110px solid transparent;
+            z-index: 30;
+        }
+        .left-pocket { left: 0; border-left: 160px solid #c93030; }
+        .right-pocket { right: 0; border-right: 160px solid #c93030; }
+
+        /* KAĞIT AYARLARI (Sorunsuz Çıkış İçin) */
+        .card {
+            position: absolute;
+            bottom: 0; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px; 
+            height: 380px; /* Kağıt uzun */
+            background: #fff url('https://www.transparenttextures.com/patterns/cream-paper.png');
+            border-radius: 5px;
+            /* Zarfın içinde gizli kalması için başlangıçta scaleY küçültülebilir ama basit tutalım */
+            transition: bottom 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 5; 
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Yazıları yukarıdan hizala */
+            align-items: center;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            opacity: 0; /* Kapalıyken görünmez olsun (taşmayı önlemek için) */
+        }
+
+        /* AÇILMA DURUMU */
+        .wrapper.open .top-flap {
+            transform: rotateX(180deg);
+            z-index: 2; 
+        }
+
+        .wrapper.open .card {
+            opacity: 1;
+            bottom: 100px; /* Zarfın üzerine iyice çıksın */
+            z-index: 45; /* Ceplerin önüne geç */
+        }
+
+        /* YAZILAR */
+        .text {
+            font-family: 'Pacifico', cursive;
+            color: #333;
+            font-size: 19px;
+            line-height: 1.5;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 1s ease 0.5s;
+        }
+
+        .wrapper.open .text { opacity: 1; }
+
+        .highlight { color: #d64141; font-weight: bold; font-size: 1.1em; }
+        .funny-part { 
+            margin-top: 25px; 
+            display: block; 
+            font-weight: bold; 
+            color: #444; 
+            font-size: 1.2em;
+            padding-top: 15px;
+            border-top: 2px dashed #ddd;
+        }
+
+        /* TIKLA YAZISI */
+        .click-me {
+            position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+            color: white; z-index: 60; font-weight: bold;
+            background: rgba(0,0,0,0.2); padding: 8px 20px; border-radius: 20px;
+            animation: pulse 1.5s infinite; pointer-events: none;
+        }
+        .wrapper.open .click-me { display: none; }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+        }
+
+        .confetti {
+            position: absolute; width: 10px; height: 10px; background-color: #f00; z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper" id="envelopeWrapper">
+        <div class="envelope">
+            <div class="back-wall"></div>
+            <div class="top-flap"></div>
+            
+            <div class="card">
+                <div class="text">
+                    Herkes yeni yıla,<br>
+                    Sen <span class="highlight">yıllarıma bedelsin</span><br>
+                    tatlı şey... 🎄<br><br>
+                    Seni <span class="highlight">ÇOOOOOOOOKKKKK</span><br>
+                    SEVİYORUM! ❤️
+                    <br><br>
+                    <span class="funny-part">Allahına Kurban! 😎</span>
+                </div>
+            </div>
+
+            <div class="left-pocket"></div>
+            <div class="right-pocket"></div>
+            <div class="front-pocket"></div>
+            <div class="click-me">Bana Tıkla ✨</div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" src="muzik.mp3" preload="auto" loop></audio>
+
+    <script>
+        const wrapper = document.getElementById('envelopeWrapper');
+        const audio = document.getElementById('bgMusic');
+        let isOpen = false;
+
+        // --- GELİŞMİŞ SES SİSTEMİ ---
+        
+        // 1. Sayfa yüklenir yüklenmez çalmayı dene (Chrome/PC için)
+        window.addEventListener('load', () => {
+            attemptPlay();
+        });
+
+        // 2. Eğer engellenirse, Ekrana İLK dokunuşta/harekette çal (Mobil için hayalet tetikleyici)
+        document.body.addEventListener('click', attemptPlay, { once: true });
+        document.body.addEventListener('touchstart', attemptPlay, { once: true });
+        document.body.addEventListener('scroll', attemptPlay, { once: true });
+        document.body.addEventListener('mousemove', attemptPlay, { once: true });
+
+        function attemptPlay() {
+            // Zaten çalıyorsa durma
+            if (audio.duration > 0 && !audio.paused) return;
+            
+            audio.volume = 0.6;
+            audio.play().then(() => {
+                // Başarılı olduysa diğer dinleyicileri kaldır (performans için)
+                console.log("Müzik başladı.");
+            }).catch(error => {
+                console.log("Otomatik çalma tarayıcı tarafından henüz bekleniyor...");
+            });
+        }
+
+        // --- ZARF ANİMASYONU ---
+        wrapper.addEventListener('click', function(e) {
+            // Müzik çalmıyorsa, zarfa tıklayınca kesin başlat
+            attemptPlay();
+
+            if (!isOpen) {
+                e.stopPropagation(); // Event çakışmasını önle
+                wrapper.classList.add('open');
+                isOpen = true;
+                setTimeout(createConfetti, 500);
+            }
+        });
+
+        function createConfetti() {
+            const colors = ['#d64141', '#eebb4d', '#4ecdc4', '#ff6b6b', '#1a535c'];
+            for (let i = 0; i < 60; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                confetti.animate([
+                    { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                    { transform: `translateY(100vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 3000 + 2000,
+                    easing: 'linear',
+                    fill: 'forwards'
+                });
+
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+    </script>
+</body>
+</html>
